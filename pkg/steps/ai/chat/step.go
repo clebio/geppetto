@@ -6,6 +6,7 @@ import (
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/claude"
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/openai"
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings"
+	"github.com/go-go-golems/geppetto/pkg/steps/ai/vertex"
 	"github.com/go-go-golems/glazed/pkg/cmds/layers"
 	"github.com/pkg/errors"
 )
@@ -42,6 +43,12 @@ func (s *StandardStepFactory) NewStepFromLayers(layers map[string]*layers.Parsed
 
 	if claude.IsClaudeEngine(*settings_.Chat.Engine) {
 		return &claude.Step{
+			Settings: settings_,
+		}, nil
+	}
+
+	if vertex.IsVertexEngine(*settings_.Chat.Engine) {
+		return &vertex.Step{
 			Settings: settings_,
 		}, nil
 	}

@@ -1,0 +1,14 @@
+slug: vertex-chat
+name: Vertex chat completion API flags
+description: Settings for the vertex chat completion API
+flags:
+  - name: vertex-n
+    type: int
+    help: vertex chat completion n
+    default: 1
+  - name: vertex-base-url
+    type: string
+    help: base URL
+    # default: "https://api.openai.com/v1"
+    default: "us-central1-aiplatform.googleapis.com:443"
+

@@ -1,5 +1,5 @@
 slug: ai-chat
-name: AI chat completion API flags, shared by OpenAI and Claude
+name: AI chat completion API flags, shared by providers (OpenAI, Claude, Vertex)
 description: Settings for the AI chat completion API
 flags:
   - name: ai-engine

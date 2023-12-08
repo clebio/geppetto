@@ -1,11 +1,13 @@
 package settings
 
 import (
+	"io"
+
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings/claude"
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings/openai"
+	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings/vertex"
 	"github.com/go-go-golems/glazed/pkg/cmds/layers"
 	"gopkg.in/yaml.v3"
-	"io"
 )
 
 type factoryConfigFileWrapper struct {
@@ -17,6 +19,7 @@ type StepSettings struct {
 	OpenAI *openai.Settings `yaml:"openai,omitempty"`
 	Client *ClientSettings  `yaml:"client,omitempty"`
 	Claude *claude.Settings `yaml:"claude,omitempty"`
+	Vertex *vertex.Settings `yaml:"vertex,omitempty"`
 }
 
 func NewStepSettingsFromYAML(s io.Reader) (*StepSettings, error) {
@@ -26,6 +29,7 @@ func NewStepSettingsFromYAML(s io.Reader) (*StepSettings, error) {
 			OpenAI: openai.NewSettings(),
 			Client: NewClientSettings(),
 			Claude: claude.NewSettings(),
+			Vertex: vertex.NewSettings(),
 		},
 	}
 	if err := yaml.NewDecoder(s).Decode(&settings_); err != nil {
@@ -57,6 +61,13 @@ func (s *StepSettings) UpdateFromParsedLayers(parsedLayers map[string]*layers.Pa
 		}
 	}
 
+	if parsedLayers["vertex-chat"] != nil {
+		err := s.Vertex.UpdateFromParsedLayer(parsedLayers["vertex-chat"])
+		if err != nil {
+			return err
+		}
+	}
+
 	if parsedLayers["ai-client"] != nil {
 		err := s.Client.UpdateFromParsedLayer(parsedLayers["ai-client"])
 		if err != nil {
@@ -73,5 +84,6 @@ func (s *StepSettings) Clone() *StepSettings {
 		OpenAI: s.OpenAI.Clone(),
 		Client: s.Client.Clone(),
 		Claude: s.Claude.Clone(),
+		Vertex: s.Vertex.Clone(),
 	}
 }

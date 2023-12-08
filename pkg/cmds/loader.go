@@ -1,10 +1,14 @@
 package cmds
 
 import (
+	"io"
+	"strings"
+
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/chat"
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings"
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings/claude"
 	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings/openai"
+	"github.com/go-go-golems/geppetto/pkg/steps/ai/settings/vertex"
 	"github.com/go-go-golems/glazed/pkg/cmds"
 	"github.com/go-go-golems/glazed/pkg/cmds/alias"
 	"github.com/go-go-golems/glazed/pkg/cmds/layers"
@@ -12,8 +16,6 @@ import (
 	"github.com/go-go-golems/glazed/pkg/cmds/parameters"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
-	"io"
-	"strings"
 )
 
 type GeppettoCommandLoader struct {
@@ -67,6 +69,14 @@ func (g *GeppettoCommandLoader) LoadCommandFromYAML(
 	if err != nil {
 		return nil, err
 	}
+
+	vertexParameterLayer, err := vertex.NewParameterLayer(
+		layers.WithDefaults(stepSettings.Vertex),
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	openaiParameterLayer, err := openai.NewParameterLayer(
 		layers.WithDefaults(stepSettings.OpenAI),
 	)
@@ -74,7 +84,7 @@ func (g *GeppettoCommandLoader) LoadCommandFromYAML(
 		return nil, err
 	}
 
-	ls := append(scd.Layers, chatParameterLayer, clientParameterLayer, claudeParameterLayer, openaiParameterLayer)
+	ls := append(scd.Layers, chatParameterLayer, clientParameterLayer, claudeParameterLayer, vertexParameterLayer, openaiParameterLayer)
 
 	options_ := []cmds.CommandDescriptionOption{
 		cmds.WithShort(scd.Short),
